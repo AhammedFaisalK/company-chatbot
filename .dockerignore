@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.git/
+.gitignore
+db.sqlite3
+logs/
+knowledge_files/vector_index.faiss
+knowledge_files/vector_metadata.pkl
+media/
+staticfiles/

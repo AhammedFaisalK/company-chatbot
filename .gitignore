@@ -1,0 +1,27 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Django
+db.sqlite3
+*.log
+media/
+staticfiles/
+
+logs/
+
+# Environment
+.env
+
+# Vector DB / embeddings cache
+*.faiss
+*.index
+embeddings_cache/
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
