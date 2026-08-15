@@ -31,4 +31,4 @@ RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["./entrypoint.sh"]
+CMD ["sh", "entrypoint.sh"]
