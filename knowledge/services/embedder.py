@@ -1,32 +1,35 @@
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
+EMBEDDING_MODEL_NAME = "BAAI/bge-small-en-v1.5"  # 384-dim, ONNX-based, no PyTorch
 
 _model = None
 
 
-def get_model() -> SentenceTransformer:
+def get_model() -> TextEmbedding:
     """
-    Lazily loads the embedding model once and reuses it.
-    Loading is the slow part (~1-2 seconds); actual embedding calls
-    after that are fast.
+    Lazily loads the ONNX-based embedding model once and reuses it.
+    fastembed uses ONNX Runtime instead of PyTorch — much lighter
+    memory footprint, well-suited to memory-constrained environments
+    like free-tier hosting.
     """
     global _model
     if _model is None:
-        _model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+        _model = TextEmbedding(model_name=EMBEDDING_MODEL_NAME)
     return _model
 
 
 def embed_texts(texts: list[str]) -> list[list[float]]:
     """
-    Embeds a batch of texts locally, no API call, no cost.
-    Returns one vector (list of floats) per input text, in order.
+    Embeds a batch of texts locally via ONNX Runtime, no API call,
+    no cost, no PyTorch. Returns one vector (list of floats) per
+    input text, in order.
     """
     if not texts:
         return []
 
     model = get_model()
-    vectors = model.encode(texts, convert_to_numpy=True, show_progress_bar=False)
+    # fastembed's .embed() returns a generator of numpy arrays
+    vectors = list(model.embed(texts))
     return [vector.tolist() for vector in vectors]
 
 
